@@ -1,0 +1,62 @@
+docker run -it --rm -v %cd%:/app -w /app -p 3001:3001 -e PORT=3001 node /bin/bash
+docker run -it --rm -v %cd%:/app -v %cd%/data:/data -w /app -p 3001:3001 -e PORT=3001 node /bin/bash
+
+npm init -y
+
+npm i express
+npm i -D dotenv
+npm i -D nodemon
+
+create directory: src, data
+create .gitignore , .env
+
+modify package json
+  "main": "src/index.js",
+
+  "scripts": {
+    "start": "node ./src/index.js",
+    "dev": "nodemon -L"
+  },
+
+npm run dev
+
+
+// -----------------------------------
+Пишем код и собираем image
+// -----------------------------------
+Создаём Dockerfile
+
+# . - это путь в файлу настроек сборки image, если файл называется стандартно "Dockerfile", то его название можно не писать
+# --tag , -t   - имя image
+docker build -t my_counter .
+
+// Запускаем image в интерактивном режиме
+docker run -it --rm -p 3001:3001 -v %cd%/data:/data -e PORT=3001 my_counter
+
+
+// -----------------------------------
+Выкладываем image в хранилище (Docker Hub)     https://hub.docker.com/repository/create
+aleman74
+rep - temp
+
+To push a new tag to this repository,
+docker push aleman74/counter:latest
+// -----------------------------------
+
+# Добавляем tag - связываем локальный образ с образом в хранилище (Docker Hub)
+docker tag my_counter:latest aleman74/counter:latest
+
+# Выполняем вход в Docker Hub (1 раз с устройства, дальше запоминает)
+docker login
+
+# Выкладываем образ в хранилище
+docker push aleman74/counter:latest
+
+# Удаление образа
+docker rmi my_counter
+
+// -----------------------------------
+Запускаем образ из глобального репозитория
+// -----------------------------------
+docker run -it --rm -p 3001:3001 -v %cd%/data:/data -e PORT=3001 aleman74/counter:latest
+
